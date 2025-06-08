@@ -3,8 +3,8 @@
 #define WDT_WWPS (*(volatile unsigned int *)(WDT1_BASE + 0x34))
 
 
-void disable_watchdog(void) {     // função permite execução 
-    WDT_WSPR = 0xAAAA;            // infinita do programa
+void disable_watchdog(void) {                                                       // função permite execução 
+    WDT_WSPR = 0xAAAA;                                                              // infinita do programa
     while (WDT_WWPS & (1 << 4));
     WDT_WSPR = 0x5555;
     while (WDT_WWPS & (1 << 4));
@@ -17,7 +17,7 @@ int main(void) {
   //inicialização de dados aqui
     
   while (1) {
-      //código do loop aqui
+    //código do loop aqui
   }
 
   return 0;
