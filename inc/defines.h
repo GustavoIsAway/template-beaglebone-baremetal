@@ -20,6 +20,7 @@
 #define GPIO1_CLEARDATAOUT      (*(volatile unsigned int*)(GPIO1_BASE + 0x190))
 #define GPIO1_SETDATAOUT        (*(volatile unsigned int*)(GPIO1_BASE + 0x194))
 #define GPIO1_DATAIN            (*(volatile unsigned int*)(GPIO1_BASE + 0x138))
+#define GPIO1_DATAOUT            (*(volatile unsigned int*)(GPIO1_BASE + 0x13C))
 #define GPIO1_IRQSTATUS_SET_0   (*(volatile unsigned int*)(GPIO1_BASE + 0x34))
 #define GPIO1_IRQSTATUS_0       (*(volatile unsigned int*)(GPIO1_BASE + 0x2C))
 #define GPIO1_RISINGDETECT      (*(volatile unsigned int*)(GPIO1_BASE + 0x148))
@@ -46,8 +47,7 @@
 //=========================================== INTERRUPÇÃO =================================================
 #define INTC_BASE       0x48200000
 
-//OLHAR SE O VETOR 3 TEM INTERRUPÇÃO POR VALOR LOGICO 
-#define INTC_MIR_CLEAR3 (*(volatile unsigned int*)(INTC_BASE + 0xE8))  // VERIFICAR SE A INTERRUPÇÃO DO ADC ESTÁ NO 3º VETOR
+#define INTC_MIR_CLEAR3 (*(volatile unsigned int*)(INTC_BASE + 0xE8))
 #define INTC_MIR_CLEAR2 (*(volatile unsigned int*)(INTC_BASE + 0xC8))
 #define INTC_SIR_IRQ    (*(volatile unsigned int*)(INTC_BASE + 0x40))
 #define INTC_CONTROL    (*(volatile unsigned int*)(INTC_BASE + 0x48))
@@ -61,7 +61,6 @@
 
 
 #define DM_TIMER7_BASE            0x4804A000
-#define DM_TIMER7_COUNTER         (*(volatile unsigned int*)(DM_TIMER7_BASE + 0x3C))
 #define DM_TIMER7_TCLR            (*(volatile unsigned int*)(DM_TIMER7_BASE + 0x38)) 
 #define DM_TIMER7_IRQENABLE_SET   (*(volatile unsigned int*)(DM_TIMER7_BASE + 0x2C))
 #define DM_TIMER7_IRQENABLE_CLEAR (*(volatile unsigned int*)(DM_TIMER7_BASE + 0x30))
@@ -70,6 +69,8 @@
 #define DM_TIMER7_TSICR           (*(volatile unsigned int*)(DM_TIMER7_BASE + 0x54))
 #define DM_TIMER7_TCRR            (*(volatile unsigned int*)(DM_TIMER7_BASE + 0x3C))
 #define DM_TIMER7_TLDR            (*(volatile unsigned int*)(DM_TIMER7_BASE + 0x4C))
+#define DM_TIMER7_TSICR           (*(volatile unsigned int*)(DM_TIMER7_BASE + 0x54))
+#define DM_TIMER7_TWPS            (*(volatile unsigned int*)(DM_TIMER7_BASE + 0x48))
 #define DM_TIMER7_START_STOP_TIMER      (1 << 0)
 #define DM_TIMER7_AUTORELOAD            (1 << 1)
 #define DM_TIMER7_PRESCALER_ENABLE      (1 << 5)
