@@ -1,6 +1,5 @@
 # Template para Projetos Baremetal na Beaglebone
 Esta template de projeto está aqui para facilitar o desenvolvimento de software embarcado na Beaglebone Black em Baremetal na linguagem C.
-Caso haja interesse em criar bibliotecas novas ou explorar as já existentes faça o seguinte:
 
 
 ## ***Como monto minhas libs aqui?***
