@@ -82,7 +82,6 @@
 #define LED_INT4 (1 << 24)
 
 
-#define pulsosPorSegundo                24000000
 #endif
 
 

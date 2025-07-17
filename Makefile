@@ -3,41 +3,73 @@
 # Modificado por: Gustavo Salgado
 #------------------------------------------------------
 
-CHAIN=arm-none-eabi
-CFLAGS=-std=c99 -Wall
-IPATH=-Iinc/
-SRC=src/
-OBJ=obj/
-BIN=bin/
+# Toolchain
+CHAIN = arm-none-eabi
+CFLAGS = -std=c99 -Wall
 
+# Pastas
+SRC = src/
+INC = inc/
+OBJ = obj/
+BIN = bin/
+CFILES = cfiles/
+IPATH = -I$(INC)
 
-# mude NOME_EXEC para mudar o nome do seu executável
+# Nome do executável
 NOME_EXEC = appGpio
+
+# Endereços de rede
 IP_BEAGLEBONE = 10.8.3.2
 IP_TFTP = 10.8.3.1
 
+# Arquivos fonte
+LIB_CS = $(wildcard $(CFILES)*.c)
+MAIN_CS = $(wildcard $(SRC)*.c)
 
+# Arquivos objeto
+LIB_OBJS = $(patsubst $(CFILES)%.c, $(OBJ)%.o, $(LIB_CS))
+MAIN_OBJS = $(patsubst $(SRC)%.c, $(OBJ)%.o, $(MAIN_CS))
+START_OBJ = $(OBJ)start.o
+
+# Todos os objetos
+OBJS = $(START_OBJ) $(MAIN_OBJS) $(LIB_OBJS)
+
+# Alvo principal
 all: app
 
-app: start.o main.o 
-	$(CHAIN)-ld $(OBJ)start.o $(OBJ)main.o -T $(SRC)memmap.ld -o $(OBJ)main.elf
-	$(CHAIN)-objcopy $(OBJ)main.elf $(BIN)spl.boot -O binary
-	cp $(BIN)spl.boot /srv/tftp/$(NOME_EXEC).bin
-	echo 'setenv app "setenv autoload no;setenv ipaddr $(IP_BEAGLEBONE); setenv serverip $(IP_TFTP); tftp 0x80000000 $(NOME_EXEC).bin;echo ***Booting to BareMetal ***;go 0x80000000"' > Comando.txt
+# Compilação final
+app: $(BIN) $(OBJ) $(OBJS)
+	$(CHAIN)-ld $(OBJS) -T $(SRC)memmap.ld -o $(OBJ)main.elf
+	$(CHAIN)-objcopy $(OBJ)main.elf $(BIN)$(NOME_EXEC).bin -O binary
+	cp $(BIN)$(NOME_EXEC).bin /srv/tftp/$(NOME_EXEC).bin
+	@echo 'setenv app "setenv autoload no; setenv ipaddr $(IP_BEAGLEBONE); setenv serverip $(IP_TFTP); tftp 0x80000000 $(NOME_EXEC).bin; echo ***Booting to BareMetal ***; go 0x80000000"'
 
-start.o: $(SRC)start.s
-	$(CHAIN)-as $(IPATH) $(SRC)start.s -o $(OBJ)start.o
 
-main.o: $(SRC)main.c
-	$(CHAIN)-gcc $(CFLAGS) $(IPATH) -c $(SRC)main.c -o $(OBJ)main.o
-                                        
-copy:
-	cp $(BIN)spl.boot /srv/tftp/$(NOME_EXEC).bin
+# Compilação do start.s
+$(START_OBJ): $(SRC)start.s | $(OBJ)
+	$(CHAIN)-as $(IPATH) $(SRC)start.s -o $(START_OBJ)
 
+# Compilação dos .c em src/
+$(OBJ)%.o: $(SRC)%.c | $(OBJ)
+	$(CHAIN)-gcc $(CFLAGS) $(IPATH) -c $< -o $@
+
+# Compilação dos .c em cfiles/
+$(OBJ)%.o: $(CFILES)%.c | $(OBJ)
+	$(CHAIN)-gcc $(CFLAGS) $(IPATH) -c $< -o $@
+
+# Diretórios bin/ e obj/
+$(OBJ):
+	mkdir -p $(OBJ)
+
+$(BIN):
+	mkdir -p $(BIN)
+
+# Alvo de limpeza
 clean:
 	rm -rf $(OBJ)*.o
 	rm -rf $(OBJ)*.elf
-	rm -rf $(BIN)*.boot
+	rm -rf $(BIN)*.bin
 
+# Dump para debug
 dump:
 	$(CHAIN)-objdump -D $(OBJ)main.elf
